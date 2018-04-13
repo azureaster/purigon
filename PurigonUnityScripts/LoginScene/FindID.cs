@@ -19,7 +19,7 @@ public class FindID : MonoBehaviour {
     public string userInputID;
     public string[] UserData;
 
-    string FindIdPwURL = "http://127.0.0.1/Purigon/UserFindIdPw.php";
+    string FindIdPwURL = "https://projectpurigon.000webhostapp.com/unityPhp/UserFindIdPw.php";
 
     public void Update()
     {

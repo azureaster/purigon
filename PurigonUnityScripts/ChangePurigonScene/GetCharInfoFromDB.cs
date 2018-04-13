@@ -18,13 +18,23 @@ public class GetCharInfoFromDB : MonoBehaviour
     public string currentuserID;
     public string[] userData;
 
-    string GetUserCharInfoURL = "http://127.0.0.1/Purigon/GetCharinfoInitial.php";
-    string GetCharInfoURL = "http://127.0.0.1/Purigon/GetCharinfo.php";
-    string SaveCharInfoURL = "http://127.0.0.1/Purigon/UpdateUserChar.php";
+    string GetUserCharInfoURL = "https://projectpurigon.000webhostapp.com/unityPhp/GetCharInfoInitial.php";
+    string GetCharInfoURL = "https://projectpurigon.000webhostapp.com/unityPhp/GetCharInfo.php";
+    string SaveCharInfoURL = "https://projectpurigon.000webhostapp.com/unityPhp/UpdateUserChar.php";
+
+
+    //purigon prefab
+    public GameObject[] purigonPrefabs;
+    public GameObject[] purigons;
+    public Transform PurigonModelPanel;
+    public Vector3 purigonScale;
+    public Vector3 purigonLocation;
+
 
     private void Start()
     {
         currentCharNum = PlayerPrefs.GetInt("CharID", 1);
+        ShowPurigonPrefab(currentCharNum);
         StartCoroutine(GetUserCharInfo());
     }
 
@@ -40,7 +50,6 @@ public class GetCharInfoFromDB : MonoBehaviour
         yield return getCharData;
 
         string userDataString = getCharData.text;
-        print(currentuserID + "   " + userDataString);
 
         userData = userDataString.Split(';');
         
@@ -82,6 +91,8 @@ public class GetCharInfoFromDB : MonoBehaviour
         if (currentCharNum < 4)
             currentCharNum += 1;
         else currentCharNum = 1;
+
+        ShowPurigonPrefab(currentCharNum);
         StartCoroutine(GetCharInfo());
     }
 
@@ -90,6 +101,8 @@ public class GetCharInfoFromDB : MonoBehaviour
         if (currentCharNum > 1)
             currentCharNum -= 1;
         else currentCharNum = 4;
+        
+        ShowPurigonPrefab(currentCharNum);
         StartCoroutine(GetCharInfo());
     }
 
@@ -100,8 +113,7 @@ public class GetCharInfoFromDB : MonoBehaviour
         form.AddField("skillIDPost", currentCharNum);
 
         WWW getuserData = new WWW(SaveCharInfoURL, form);
-
-        Debug.Log("UserChar Updated");
+        Debug.Log("UserChar Updated: " + getuserData);
 
         PlayerPrefs.SetInt("CharID", currentCharNum);
         SceneManager.LoadScene("MainScene");
@@ -117,7 +129,20 @@ public class GetCharInfoFromDB : MonoBehaviour
         return value;
     }
 
+    void ShowPurigonPrefab(int currentCharNum) {
 
+        foreach (Transform child in PurigonModelPanel){
+            Destroy(child.gameObject);
+        }
+
+        purigons = new GameObject[1];
+        purigons[0] = Instantiate(purigonPrefabs[currentCharNum-1]) as GameObject;
+
+        purigons[0].transform.localScale = purigonScale;
+        purigons[0].transform.localPosition = purigonLocation;
+        purigons[0].transform.SetParent(PurigonModelPanel);
+        
+    }
 
 
 }

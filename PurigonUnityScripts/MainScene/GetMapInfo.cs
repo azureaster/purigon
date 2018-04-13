@@ -8,7 +8,7 @@ public class GetMapInfo : MonoBehaviour {
     public Text currentMapName;
     public int chosenMapID;
 
-    string GetMapInfoURL = "http://127.0.0.1/Purigon/GetMapInfo.php";
+    string GetMapInfoURL = "https://projectpurigon.000webhostapp.com/unityPhp/GetMapInfo.php";
 
     void Start () {
         StartCoroutine(GetMapName());

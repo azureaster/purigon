@@ -12,7 +12,7 @@ public class ClickCancleBtn : MonoBehaviour {
     {
         if (Panel.tag == "FindIDPanel")
         {
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 2; i++)
             { //입력받은 data 삭제
                 inputFieldRef[i].text = "";
             }

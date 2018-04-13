@@ -15,7 +15,7 @@ public class GetUserInfoScoreboardScene : MonoBehaviour
     string CurrentuserID;
     public string[] UserData;
 
-    string GetUserInfoURL = "http://127.0.0.1/Purigon/GetUserInfo.php";
+    string GetUserInfoURL = "https://projectpurigon.000webhostapp.com/unityPhp/GetUserInfo.php";
     private string[] UserType = {"BALANCE","LIGHT","HEALTH","SPEED"};
 
 

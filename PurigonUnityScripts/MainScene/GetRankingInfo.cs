@@ -7,6 +7,7 @@ public class GetRankingInfo : MonoBehaviour {
     
     public Text currentUserDailyBest;
     public Text currentUserTotalBest;
+    public Text whichRanktoSee;
 
     public string currentuserID;
     public int chosenMapID;
@@ -15,21 +16,15 @@ public class GetRankingInfo : MonoBehaviour {
     public string[] UserData;
 
     //USERINFO DB의 NAME, CHARNUM, SKILLNUM 를 ID로 USERRECORD DB와 Join되어있음 명령어 참고: http://kwonsaw.tistory.com/142
-    string GetRankingInfoURL = "http://127.0.0.1/Purigon/GetRankingInfo.php";
+    string GetRankingInfoURL = "https://projectpurigon.000webhostapp.com/unityPhp/GetRankingInfo.php";
 
 
     public GameObject ItemObject;
     public Transform Content;
-
+    //public Sprite[] faceImage;
+    
 
     void Start() {
-        Sprite[] faceImage = {
-        Resources.Load("Image/Face_Balance") as Sprite,
-        Resources.Load("Image/Face_Light") as Sprite,
-        Resources.Load("Image/Face_Health") as Sprite,
-        Resources.Load("Image/Face_Speed") as Sprite
-        };
-
         currentuserID = PlayerPrefs.GetString("LoginID", "Default ID");
         StartCoroutine(GetRankData());
     }
@@ -39,11 +34,13 @@ public class GetRankingInfo : MonoBehaviour {
     }
 
     public void DailyBtnClicked() {
+        whichRanktoSee.text = "";
         whichBest = "DAILYBEST";
         StartCoroutine(GetRankData());
     }
 
     public void TotalBtnClicked() {
+        whichRanktoSee.text = "";
         whichBest = "TOTALBEST";
         StartCoroutine(GetRankData());
     }

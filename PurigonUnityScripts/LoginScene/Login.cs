@@ -13,7 +13,7 @@ public class Login : MonoBehaviour
     public string inputUserID;
     public string inputUserPW;
 
-    string LoginURL = "http://127.0.0.1/Purigon/UserLogin.php";
+    string LoginURL = "https://projectpurigon.000webhostapp.com/unityPhp/UserLogin.php";
 
     // Use this for initialization
     void Start()
@@ -48,9 +48,6 @@ public class Login : MonoBehaviour
 
         if (www.text == "login success") {
             PlayerPrefs.SetString("LoginID", userID);
-
-            ///마지막 로그인 기록 읽어오고 서버시간과 비교해서 하루 지났으면 해당 유저의 DAILYRECORD 지워지게 해야함
-
             SceneManager.LoadScene("MainScene");
         }
 

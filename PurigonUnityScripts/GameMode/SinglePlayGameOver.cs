@@ -3,45 +3,41 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GetMapRankingInfo : MonoBehaviour {
-   
+public class SinglePlayGameOver : MonoBehaviour
+{
+    public int mapID = 1;
+
+    public Text userFuenta;
+    public Text thisGameRecord;
+
+
     public Text userPracticeBest;
     public Text userDailyBest;
     public Text userTotalBest;
-
+    
     public Text totalDailyBest;
     public Text totalTotalBest;
 
-    public int chosenMapID;
+
     public string currentuserID;
     public string[] UserData;
-
+   
     string GetRankingInfoURL = "https://projectpurigon.000webhostapp.com/unityPhp/GetRankingInfo.php";
     string GetMyRankingURL = "https://projectpurigon.000webhostapp.com/unityPhp/GetMyRanking.php";
 
     void Start()
     {
         currentuserID = PlayerPrefs.GetString("LoginID", "Default ID");
-        chosenMapID = GameObject.Find("Dropdown").GetComponent<Dropdown>().value + 1;
 
         StartCoroutine(GetDailyRankData());
         StartCoroutine(GetTotalRankData());
         StartCoroutine(FindMyRecord());
     }
-
-    public void MapChosenChanged()
-    {
-        chosenMapID = GameObject.Find("Dropdown").GetComponent<Dropdown>().value + 1;
-        StartCoroutine(GetDailyRankData());
-        StartCoroutine(GetTotalRankData());
-        StartCoroutine(FindMyRecord());
-    }
-
 
     IEnumerator GetDailyRankData()
     {
         WWWForm form = new WWWForm();
-        form.AddField("mapIDPost", chosenMapID);
+        form.AddField("mapIDPost", mapID);
         form.AddField("bestRecordPost", "DAILYBEST");
 
         WWW getRankData = new WWW(GetRankingInfoURL, form);
@@ -57,7 +53,7 @@ public class GetMapRankingInfo : MonoBehaviour {
     IEnumerator GetTotalRankData()
     {
         WWWForm form = new WWWForm();
-        form.AddField("mapIDPost", chosenMapID);
+        form.AddField("mapIDPost", mapID);
         form.AddField("bestRecordPost", "TOTALBEST");
 
         WWW getRankData = new WWW(GetRankingInfoURL, form);
@@ -81,7 +77,7 @@ public class GetMapRankingInfo : MonoBehaviour {
     {
         WWWForm form = new WWWForm();
         form.AddField("userIDPost", currentuserID);
-        form.AddField("mapIDPost", chosenMapID);
+        form.AddField("mapIDPost", mapID);
 
         WWW getRankData = new WWW(GetMyRankingURL, form);
         yield return getRankData;
@@ -94,7 +90,14 @@ public class GetMapRankingInfo : MonoBehaviour {
         userDailyBest.text = GetDataValue(UserData[0], "DAILYBEST:") + "m";
         userTotalBest.text = GetDataValue(UserData[0], "TOTALBEST:") + "m";
         userPracticeBest.text = GetDataValue(UserData[0], "PRACTICEBEST:") + "m";
-
+          
 
     }
+
+
+
+
+
+
+
 }

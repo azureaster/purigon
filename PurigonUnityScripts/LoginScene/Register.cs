@@ -18,7 +18,7 @@ public class Register : MonoBehaviour{
     public string inputUserPW;
     private string ConfPassword;
 
-    string CreatUserURL = "http://127.0.0.1/Purigon/UserRegister.php";
+    string CreatUserURL = "https://projectpurigon.000webhostapp.com/unityPhp/UserRegister.php";
     
     private ClickIDCheck IDCheckBtn;
     private ClickNameCheck NameCheckBtn;

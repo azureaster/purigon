@@ -14,7 +14,7 @@ public class GetUserInfo : MonoBehaviour {
     string CurrentuserID;
     public string[] UserData;
 
-    string GetUserInfoURL = "http://127.0.0.1/Purigon/GetUserInfo.php";
+    string GetUserInfoURL = "https://projectpurigon.000webhostapp.com/unityPhp/GetUserInfo.php";
 
     IEnumerator Start()
     {
