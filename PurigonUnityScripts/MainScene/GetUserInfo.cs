@@ -31,6 +31,7 @@ public class GetUserInfo : MonoBehaviour {
 
         UserData = userDataString.Split(';');
         userName.text = GetDataValue(UserData[0], "NAME:");
+        PlayerPrefs.SetString("userName", userName.text);
         userLV.text = GetDataValue(UserData[0], "LV:");
         userEXP.value = int.Parse(GetDataValue(UserData[0], "EXP:"));
         userCHAR = int.Parse(GetDataValue(UserData[0], "CHARNUM:"));

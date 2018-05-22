@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PurigonCollisionCtrl : MonoBehaviour {
 
@@ -28,6 +29,8 @@ public class PurigonCollisionCtrl : MonoBehaviour {
     Vector3 recoverItemPosition;
     Vector3 collPos;
 
+    public float thisGameRecord;
+
     float startTimer = 0.0f;
     float invincibleTimeToRun = 2.0f;
     float moveLeftTimeToRun = 1.0f;
@@ -41,6 +44,12 @@ public class PurigonCollisionCtrl : MonoBehaviour {
     
     void OnCollisionEnter(Collision coll)
     {
+        if (this.GetComponent<PurigonCtrl>().IsDead)
+        {
+            this.GetComponent<PurigonCtrl>().weight = 0;
+            return;
+        }
+
         if (this.GetComponent<PurigonCtrl>().IsShield == true && (coll.collider.tag == "HardObstacle" || coll.collider.tag == "SoftObstacle" || coll.collider.tag == "Wall"))
         {
             collisionSoundEffect.clip = sound_HitShield;
@@ -53,24 +62,24 @@ public class PurigonCollisionCtrl : MonoBehaviour {
         else if (coll.collider.tag == "HardObstacle")
         {
             this.GetComponent<PurigonCtrl>().CharHP -= 50;
-            Collision_Effect(coll);
-            if (this.GetComponent<PurigonCtrl>().CharHP < 0)
+            if (this.GetComponent<PurigonCtrl>().CharHP <= 0)
                 HP_becameZero();
+            Collision_Effect(coll);
 
         }
         else if (coll.collider.tag == "SoftObstacle")
         {
             this.GetComponent<PurigonCtrl>().CharHP -= 10;
-            Collision_Effect(coll);
-            if (this.GetComponent<PurigonCtrl>().CharHP < 0)
+            if (this.GetComponent<PurigonCtrl>().CharHP <= 0)
                 HP_becameZero();
+            Collision_Effect(coll);
         }
         else if (coll.collider.tag == "Wall")
         {
             this.GetComponent<PurigonCtrl>().CharHP -= 50;
-            Collision_Effect(coll);
-            if (this.GetComponent<PurigonCtrl>().CharHP < 0)
+            if (this.GetComponent<PurigonCtrl>().CharHP <= 0)
                 HP_becameZero();
+            Collision_Effect(coll);
         }
 
         else if (coll.collider.tag == "Item_SmallP")
@@ -221,25 +230,55 @@ public class PurigonCollisionCtrl : MonoBehaviour {
     }
    
 
-
-
     public void HP_becameZero() {
-        if (this.GetComponent<PurigonCtrl>().CharHP < 0) this.GetComponent<PurigonCtrl>().CharHP = 0;
-        //만약 영혼이며 죽는효과나 에니메이션
-
-
-
+        this.GetComponent<PurigonCtrl>().hpBar.value = 0;
         string currentScene = SceneManager.GetActiveScene().name;
-        if (currentScene.Contains("Single")) {
-            //SceneManager.LoadScene("GameOverScene_SinglePlayMode");
-            Debug.Log("GameOver");
-            PlayerPrefs.SetFloat("PracticeRecord",0);
-        }
-        else {
+        if (currentScene.Contains("Single")) //싱글 모드이면 그냥 죽음
+        {
+            this.GetComponent<PurigonCtrl>().CharHP = 0;
+            this.GetComponent<PurigonCtrl>().animator.SetTrigger("IsDead");
+            this.GetComponent<PurigonCtrl>().IsDead = true;
+            this.GetComponent<PurigonCtrl>().purigonState = PurigonCtrl.PurigonState.Dead;
+            PlayerPrefs.SetInt("CurrentMapNo", int.Parse(currentScene.Substring(6, 2)));
 
 
+            Invoke("Single_GameOverScene", 3);
         }
+        else //만약 멀티플레이어모드이면 상태확인 - 일반상태이면 영혼부활 / 영혼상태이면 완전 죽음
+        {
+            //영혼상태=false 
+            //영혼상태로 부활
+
+            //만약 영혼상태=true
+            this.GetComponent<PurigonCtrl>().CharHP = 0;
+            this.GetComponent<PurigonCtrl>().animator.SetTrigger("IsDead");
+            this.GetComponent<PurigonCtrl>().IsDead = true;
+            this.GetComponent<PurigonCtrl>().purigonState = PurigonCtrl.PurigonState.Dead;
+            Invoke("Multi_GameOverScene", 3);
+
+        }
+
+        
+        
     }
 
+    void Single_GameOverScene()
+    {
+        Debug.Log("SingleMode GameOver");
+        thisGameRecord = GameObject.Find("DistanceTxt").GetComponent<UI_distanceTxtScript>().flightRecordDistance;
+        PlayerPrefs.SetFloat("PracticeRecord", thisGameRecord); 
+      
 
+        StartCoroutine(GameObject.Find("RecordManager").GetComponent<UpdatePracticeRecord>().UpdatePracticeRec());
+
+
+    }
+
+    void Multi_GameOverScene()
+    {
+        Debug.Log("MultiMode GameOver");
+        PlayerPrefs.SetFloat("CurrentMapRecord", 0000); //기록(현재 맵/기록/(당시사용퓨룡?)) DB에 저장하게 해야함
+        SceneManager.LoadScene("GameOverScene_MultiPlayMode");
+
+    }
 }

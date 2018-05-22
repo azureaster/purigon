@@ -3,50 +3,54 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SinglePlayGameOver : MonoBehaviour
-{
-    public int mapID;
+public class NETGameOver : MonoBehaviour {
 
-    public Text userFuenta;
-    public Text thisGameRecord;
-
-    public Text userPracticeBest;
     public Text userDailyBest;
     public Text userTotalBest;
-    
+
     public Text totalDailyBest;
     public Text totalTotalBest;
 
-    public GameObject NewRecordImage;
-
-    private int newRecord = 0;
-
+    public int chosenMapID;
     public string currentuserID;
     public string[] UserData;
-   
+
     string GetRankingInfoURL = "https://projectpurigon.000webhostapp.com/unityPhp/GetRankingInfo.php";
     string GetMyRankingURL = "https://projectpurigon.000webhostapp.com/unityPhp/GetMyRanking.php";
 
-    void Start()
-    {
-        mapID = PlayerPrefs.GetInt("CurrentMapNo", 00);
-        currentuserID = PlayerPrefs.GetString("LoginID", "Default ID");
-        thisGameRecord.text = (PlayerPrefs.GetFloat("PracticeRecord", 0)).ToString("0.00") + "M";
-        newRecord = PlayerPrefs.GetInt("newPracticeRecord", 0);
+    public Text[] NameTxt = new Text[6];
+    public Text[] DistanceTxt = new Text[6];
 
-        if (newRecord == 1) {
-            NewRecordImage.SetActive(true);
+
+	// Use this for initialization
+	void Start () {
+        for (int i = 0; i < PhotonNetwork.playerList.Length; i++)
+        {
+            Debug.Log(PhotonNetwork.playerList[i].NickName + " CurrentRanking: " + PhotonNetwork.playerList[i].CustomProperties["CurrentRanking"]);
+            NameTxt[(int)PhotonNetwork.playerList[i].CustomProperties["CurrentRanking"]-1].text = PhotonNetwork.playerList[i].NickName;
+            float flightDistance = (float)PhotonNetwork.playerList[i].CustomProperties["FlightDistance"];
+            DistanceTxt[(int)PhotonNetwork.playerList[i].CustomProperties["CurrentRanking"] - 1].text = flightDistance.ToString("00") + "M"; ;
         }
+
+        currentuserID = PlayerPrefs.GetString("LoginID", "Default ID");
+        chosenMapID = PlayerPrefs.GetInt("CurrentMapNo", 00);
 
         StartCoroutine(GetDailyRankData());
         StartCoroutine(GetTotalRankData());
         StartCoroutine(FindMyRecord());
+
     }
+
+
+    
+
+
+    
 
     IEnumerator GetDailyRankData()
     {
         WWWForm form = new WWWForm();
-        form.AddField("mapIDPost", mapID);
+        form.AddField("mapIDPost", chosenMapID);
         form.AddField("bestRecordPost", "DAILYBEST");
 
         WWW getRankData = new WWW(GetRankingInfoURL, form);
@@ -62,7 +66,7 @@ public class SinglePlayGameOver : MonoBehaviour
     IEnumerator GetTotalRankData()
     {
         WWWForm form = new WWWForm();
-        form.AddField("mapIDPost", mapID);
+        form.AddField("mapIDPost", chosenMapID);
         form.AddField("bestRecordPost", "TOTALBEST");
 
         WWW getRankData = new WWW(GetRankingInfoURL, form);
@@ -86,27 +90,28 @@ public class SinglePlayGameOver : MonoBehaviour
     {
         WWWForm form = new WWWForm();
         form.AddField("userIDPost", currentuserID);
-        form.AddField("mapIDPost", mapID);
+        form.AddField("mapIDPost", chosenMapID);
 
         WWW getRankData = new WWW(GetMyRankingURL, form);
         yield return getRankData;
 
         string userDataString = getRankData.text;
         Debug.Log(userDataString);
+        if (userDataString.Contains("error"))
+        {
+            userDailyBest.text = "No Record Exists";
+            userTotalBest.text = "No Record Exists";
 
-        UserData = userDataString.Split(';');
+        }
+        else
+        {
+            UserData = userDataString.Split(';');
 
-        userDailyBest.text = GetDataValue(UserData[0], "DAILYBEST:") + "m";
-        userTotalBest.text = GetDataValue(UserData[0], "TOTALBEST:") + "m";
-        userPracticeBest.text = GetDataValue(UserData[0], "PRACTICEBEST:") + "m";
-          
+            userDailyBest.text = GetDataValue(UserData[0], "DAILYBEST:") + "m";
+            userTotalBest.text = GetDataValue(UserData[0], "TOTALBEST:") + "m";
+        }
+
 
     }
-
-
-
-
-
-
 
 }

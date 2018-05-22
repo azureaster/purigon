@@ -22,7 +22,7 @@ public class GetMapRankingInfo : MonoBehaviour {
     void Start()
     {
         currentuserID = PlayerPrefs.GetString("LoginID", "Default ID");
-        chosenMapID = GameObject.Find("Dropdown").GetComponent<Dropdown>().value + 1;
+        chosenMapID = GameObject.Find("MapDropdown").GetComponent<Dropdown>().value + 1;
 
         StartCoroutine(GetDailyRankData());
         StartCoroutine(GetTotalRankData());
@@ -31,7 +31,7 @@ public class GetMapRankingInfo : MonoBehaviour {
 
     public void MapChosenChanged()
     {
-        chosenMapID = GameObject.Find("Dropdown").GetComponent<Dropdown>().value + 1;
+        chosenMapID = GameObject.Find("MapDropdown").GetComponent<Dropdown>().value + 1;
         StartCoroutine(GetDailyRankData());
         StartCoroutine(GetTotalRankData());
         StartCoroutine(FindMyRecord());
@@ -88,13 +88,20 @@ public class GetMapRankingInfo : MonoBehaviour {
 
         string userDataString = getRankData.text;
         Debug.Log(userDataString);
+        if (userDataString.Contains("error")) {
+            userDailyBest.text = "No Record Exists";
+            userTotalBest.text = "No Record Exists";
+            userPracticeBest.text = "No Record Exists";
 
-        UserData = userDataString.Split(';');
+        }
+        else {
+            UserData = userDataString.Split(';');
 
-        userDailyBest.text = GetDataValue(UserData[0], "DAILYBEST:") + "m";
-        userTotalBest.text = GetDataValue(UserData[0], "TOTALBEST:") + "m";
-        userPracticeBest.text = GetDataValue(UserData[0], "PRACTICEBEST:") + "m";
-
+            userDailyBest.text = GetDataValue(UserData[0], "DAILYBEST:") + "m";
+            userTotalBest.text = GetDataValue(UserData[0], "TOTALBEST:") + "m";
+            userPracticeBest.text = GetDataValue(UserData[0], "PRACTICEBEST:") + "m";
+        }
+        
 
     }
 }

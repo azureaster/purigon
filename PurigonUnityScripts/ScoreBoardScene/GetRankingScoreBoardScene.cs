@@ -25,17 +25,16 @@ public class GetRankingScoreBoardScene : MonoBehaviour
 
     public GameObject ItemObject;
     public Transform Content;
+    public Sprite[] faceImage = new Sprite[4];
 
 
     void Start()
-    {/*
-        Sprite[] faceImage = {
-        Resources.Load("Image/Face_Balance") as Sprite,
-        Resources.Load("Image/Face_Light") as Sprite,
-        Resources.Load("Image/Face_Health") as Sprite,
-        Resources.Load("Image/Face_Speed") as Sprite
-    };*/
-
+    {
+        faceImage[0] = Resources.Load<Sprite>("MyImage/Face_Balance");
+        faceImage[1] = Resources.Load<Sprite>("MyImage/Face_Light");
+        faceImage[2] = Resources.Load<Sprite>("MyImage/Face_Health");
+        faceImage[3] = Resources.Load<Sprite>("MyImage/Face_Speed");
+            
         currentuserID = PlayerPrefs.GetString("LoginID", "Default ID");
         StartCoroutine(GetRankData());
     }
@@ -130,7 +129,7 @@ public class GetRankingScoreBoardScene : MonoBehaviour
             {//if (whichBest == "DAILYBEST") {
                 tempButton.UserRecord.text = GetDataValue(UserData[i], "DAILYBEST:") + "m";
             }
-            //tempButton.UserPurigon = faceImage[(int.Parse(GetDataValue(UserData[i], "CHARNUM:"))) - 1];
+            tempButton.UserPurigon = faceImage[(int.Parse(GetDataValue(UserData[i], "CHARNUM:"))) - 1];
             tempButton.Item.onClick.AddListener(() => ItemClick_Result(int.Parse(GetDataValue(UserData[i], "UID:"))));
 
         }

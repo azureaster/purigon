@@ -9,7 +9,7 @@ public class ClickIDCheck : MonoBehaviour {
 
     public bool validID = false;
 
-    string IDCheckURL = "http://127.0.0.1/Purigon/IDCheck.php";
+    string IDCheckURL = "https://projectpurigon.000webhostapp.com/unityPhp/IDCheck.php";
     string returnString;
 
     public void OnClickIDCheckBtn()

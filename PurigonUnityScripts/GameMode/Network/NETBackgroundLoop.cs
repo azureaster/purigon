@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BackgroundLoop : MonoBehaviour {
+public class NETBackgroundLoop : MonoBehaviour {
 
     private new Renderer renderer;
     public float speed;
@@ -17,14 +17,14 @@ public class BackgroundLoop : MonoBehaviour {
 	// Update is called once per frame
 	public void Update () {
         SpeedCtrl();
-        if (GameObject.Find("userPurigon").GetComponent<PurigonCtrl>().IsDead) speed = 0;
+        if (GameObject.Find("userPurigon").GetComponent<NETPurigonCtrl>().IsDead) speed = 0;
         Vector2 offset = new Vector2(Time.time * speed, 0);
 
         renderer.material.mainTextureOffset = offset;
 	}
 
     void SpeedCtrl() {
-        currentspeed = GameObject.Find("userPurigon").GetComponent<PurigonCtrl>().currentSpeed;
+        //currentspeed = GameObject.Find("userPurigon").GetComponent<NETPurigonCtrl>().currentSpeed;
         //speed는 퓨룡 속도에 맞춰서 변화해야한다(퓨룡은 부딪혀서 멈춰있는데 배경은 계속 움직이면 안되니까. 
         
         if (gameObject.tag == "Background_first") speed = 0.14f;

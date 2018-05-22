@@ -10,7 +10,7 @@ public class ClickNameCheck : MonoBehaviour
 
     public bool validName = false;
 
-    string NameCheckURL = "http://127.0.0.1/Purigon/NameCheck.php";
+    string NameCheckURL = "https://projectpurigon.000webhostapp.com/unityPhp/NameCheck.php";
     string returnString;
 
     public void OnClickNameCheckBtn()

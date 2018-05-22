@@ -27,7 +27,7 @@ public class GetMapInfo : MonoBehaviour {
         WWW getMapData = new WWW(GetMapInfoURL, form);
         yield return getMapData;
 
-        currentMapName.text = "Map: " + getMapData.text;
+        currentMapName.text =  getMapData.text;
     }
 
     

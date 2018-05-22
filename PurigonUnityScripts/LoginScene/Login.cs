@@ -7,6 +7,8 @@ using UnityEngine.SceneManagement;
 
 public class Login : MonoBehaviour
 {
+	public GameObject loginCanvas;
+	
     public GameObject userID;
     public GameObject password;
 
@@ -15,15 +17,13 @@ public class Login : MonoBehaviour
 
     string LoginURL = "https://projectpurigon.000webhostapp.com/unityPhp/UserLogin.php";
 
-    // Use this for initialization
-    void Start()
-    {
-
-    }
-
+	public bool IsLoadingFin = false;
+	
     public void OnClickLogInBtn()
     {
+        loginCanvas.SetActive(true);
         StartCoroutine(LoginToDB(inputUserID, inputUserPW));
+        IsLoadingFin = false;
     }
 
     // Update is called once per frame
@@ -47,8 +47,15 @@ public class Login : MonoBehaviour
         Debug.Log(www.text);
 
         if (www.text == "login success") {
+            IsLoadingFin = true;
             PlayerPrefs.SetString("LoginID", userID);
             SceneManager.LoadScene("MainScene");
+        }
+
+        else if(www.text=="user not found")
+        {
+            IsLoadingFin = true;
+            loginCanvas.SetActive(false);
         }
 
 

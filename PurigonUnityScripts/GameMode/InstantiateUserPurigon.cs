@@ -7,6 +7,7 @@ public class InstantiateUserPurigon : MonoBehaviour {
 
     public GameObject[] purigonPrefabs;
     public GameObject userPurigon;
+    public GameObject userPurigonUI;
 
     public Vector3 purigonScale;
     public Vector3 purigonLocation;
@@ -30,6 +31,8 @@ public class InstantiateUserPurigon : MonoBehaviour {
 
         userPurigon.transform.localScale = purigonScale;
         userPurigon.transform.localPosition = purigonLocation;
+        
+
     }
 
 

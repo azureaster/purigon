@@ -29,9 +29,10 @@ public class GetCharInfoFromDB : MonoBehaviour
     public Transform PurigonModelPanel;
     public Vector3 purigonScale;
     public Vector3 purigonLocation;
+    public Vector3 purigonRotation;
 
-
-    private void Start()
+ 
+     private void Start()
     {
         currentCharNum = PlayerPrefs.GetInt("CharID", 1);
         ShowPurigonPrefab(currentCharNum);
@@ -107,19 +108,24 @@ public class GetCharInfoFromDB : MonoBehaviour
     }
 
     public void OnClickSaveClicked() {
+        StartCoroutine(SaveChange());
+    }
+
+    IEnumerator SaveChange() {
         WWWForm form = new WWWForm();
         form.AddField("userIDPost", currentuserID);
         form.AddField("charIDPost", currentCharNum);
         form.AddField("skillIDPost", currentCharNum);
 
         WWW getuserData = new WWW(SaveCharInfoURL, form);
-        Debug.Log("UserChar Updated: " + getuserData);
+        yield return getuserData;
 
+        Debug.Log("UserChar Updated: " + getuserData.text);
         PlayerPrefs.SetInt("CharID", currentCharNum);
+
+        PhotonNetwork.isMessageQueueRunning = false;
         SceneManager.LoadScene("MainScene");
     }
-
-
 
 
     string GetDataValue(string data, string index)
@@ -138,6 +144,7 @@ public class GetCharInfoFromDB : MonoBehaviour
         purigons = new GameObject[1];
         purigons[0] = Instantiate(purigonPrefabs[currentCharNum-1]) as GameObject;
 
+        purigons[0].transform.Rotate(purigonRotation);
         purigons[0].transform.localScale = purigonScale;
         purigons[0].transform.localPosition = purigonLocation;
         purigons[0].transform.SetParent(PurigonModelPanel);

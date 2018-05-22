@@ -5,12 +5,13 @@ using UnityEngine.UI;
 
 public class PurigonCtrl : MonoBehaviour {
 
-    public enum PurigonState { FlyFoward, FlyGlide, Hitted };
+    public enum PurigonState { FlyFoward, FlyGlide, Hitted, Dead };
     public PurigonState purigonState = PurigonState.FlyFoward;
     public Animator animator;
 
     public GameObject speed_purigon;
     public GameObject speed_egg;
+    public GameObject purigonEye;
 
     public Transform PurigonTr;
 
@@ -46,15 +47,18 @@ public class PurigonCtrl : MonoBehaviour {
     public GameObject Collision_Effect;
     public GameObject trace_Effect;
     public GameObject afterImage;
-
+    
     public bool IsShield = false;
     public bool IsDash = false;
     private bool IsEggMode = false;
     public bool IsCollision = false;
+    public bool IsDead = false;
 
-    public static int pllut;
+    public static float pllut;
+    public GameObject pllutFill;
 
     public Slider hpBar;
+    public RectTransform followHealthBar;
 
     public GameObject shieldClone;
     GameObject afterimage_clone;
@@ -79,6 +83,7 @@ public class PurigonCtrl : MonoBehaviour {
     void Awake()
     {
         pllut = 0;
+        pllutFill = GameObject.Find("PllutFill");
         userCHAR = PlayerPrefs.GetInt("CharID", 1);
         soundEffects = GetComponents<AudioSource>(); //0:Skill 1:Collision 2:Item
         skillSoundEffect = soundEffects[0];  
@@ -92,6 +97,7 @@ public class PurigonCtrl : MonoBehaviour {
         PurigonTr = this.gameObject.GetComponent<Transform>();
         animator = this.gameObject.GetComponent<Animator>();
         hpBar = GameObject.Find("Healthbar").GetComponent<Slider>();
+        hpBar.value = 1;
 
         InvokeRepeating("Collectpllut", 10.0f , 10.0f);  //10초후에 10초마다 한번씩 Collectpllut함수 실행
         InvokeRepeating("HPReduce", 1.0f, 1.0f);
@@ -105,16 +111,23 @@ public class PurigonCtrl : MonoBehaviour {
 
     void Update()
     {
+        if (IsDead)
+        {
+            followHealthBar.sizeDelta = new Vector2(CharHP / maxHP * 100, followHealthBar.sizeDelta.y);
+            currentSpeed = 0;
+            PurigonTr.Translate(new Vector3(0, -weight * Time.deltaTime, currentSpeed * Time.deltaTime), Space.Self);
+            return;
+        }
         //animator.speed = currentSpeed;
         upClicked = GameObject.Find("BtnManager").GetComponent<PurigonBtnCtrl>().upClicked;
         speedClicked = GameObject.Find("BtnManager").GetComponent<PurigonBtnCtrl>().speedClicked;
         skillClicked = GameObject.Find("BtnManager").GetComponent<PurigonBtnCtrl>().skillClicked;
 
-        if (upClicked == true || Input.GetKey(KeyCode.UpArrow)) 
+        if (upClicked == true || Input.GetKey(KeyCode.UpArrow))
             PurigonTr.Translate(new Vector3(0, upSpeed * Time.deltaTime, currentSpeed * Time.deltaTime), Space.Self);
-        else 
+        else
             PurigonTr.Translate(new Vector3(0, -weight * Time.deltaTime, currentSpeed * Time.deltaTime), Space.Self);
-    
+
         if (speedClicked == true || Input.GetKey(KeyCode.RightArrow))
             IfSpeedClick();
         else
@@ -123,15 +136,15 @@ public class PurigonCtrl : MonoBehaviour {
         if (skillClicked == true || Input.GetKey(KeyCode.Space))
             IfSkillClicked();
         
-       
         hpBar.value = CharHP / maxHP;
-        
+        followHealthBar.sizeDelta = new Vector2(CharHP / maxHP * 100, followHealthBar.sizeDelta.y);
+        pllutFill.GetComponent<Image>().fillAmount = pllut / 50;
     }
-
-
+    
 
     //프륫의 개수를 증가시켜주는 함수
     void Collectpllut() {
+        if (IsDead) return;
         pllut += 2;  
         if (pllut > 50) pllut = 50;
     }
@@ -139,6 +152,7 @@ public class PurigonCtrl : MonoBehaviour {
 
     void HPReduce()
     {
+        if (IsDead) return;
         CharHP -= 1;
         if (CharHP <= 0){
             this.GetComponent<PurigonCollisionCtrl>().HP_becameZero();
@@ -148,6 +162,7 @@ public class PurigonCtrl : MonoBehaviour {
 
     public void IfSpeedClick()
     {
+        if (IsDead) return;
         animator.SetBool("IsSpeedBtn", true);
         purigonState = PurigonState.FlyGlide;
 
@@ -160,6 +175,7 @@ public class PurigonCtrl : MonoBehaviour {
     }
     public void IfSpeedUnClick()
     {
+        if (IsDead) return;
         if (IsDash == true)
         {
             return;
@@ -179,6 +195,7 @@ public class PurigonCtrl : MonoBehaviour {
 
     public void IfSkillClicked()
     {
+        if (IsDead) return;
         if (pllut >= 50 && IsShield == false && IsDash == false && IsEggMode == false)    //Level5 skill
         {
             GetAudioClips("Shield");
@@ -191,7 +208,7 @@ public class PurigonCtrl : MonoBehaviour {
         }
 
         else if (pllut >= 40 && IsDash == false && IsEggMode == false)   //Level4 skill
-        {
+        {if (IsDead) return;
             if (gameObject.tag == "BalanceType")
             {
                 GetAudioClips("B4");
@@ -400,9 +417,11 @@ public class PurigonCtrl : MonoBehaviour {
         transform_egg.transform.parent = transform;
         speed_purigon.SetActive(false);
         speed_egg.SetActive(true);
+        purigonEye.SetActive(false);
         yield return new WaitForSeconds(5);
         speed_purigon.SetActive(true);
         speed_egg.SetActive(false);
+        purigonEye.SetActive(true) ;
         IsEggMode = false;
     }
 
